@@ -1,0 +1,17 @@
+# Default to LF for all text files checked into the repo.
+* text=auto eol=lf
+
+# Windows scripts: keep CRLF when executed locally (optional convention).
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Binary assets
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.webp binary
+*.dll binary
+*.exe binary
+*.pdb binary
