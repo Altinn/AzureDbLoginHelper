@@ -1,4 +1,6 @@
 using Avalonia;
+using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Threading;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -10,17 +12,44 @@ internal static class AvaloniaEntry
     {
         App.ConfigureHost(host);
 
-        host.Services.GetRequiredService<IHostApplicationLifetime>().ApplicationStopping.Register(() =>
-        {
-            if (Application.Current?.ApplicationLifetime
-                is Avalonia.Controls.ApplicationLifetimes.IClassicDesktopStyleApplicationLifetime desktop)
-            {
-                desktop.Shutdown();
-            }
-        });
+        var appLifetime = host.Services.GetRequiredService<IHostApplicationLifetime>();
+        var ended = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
 
-        return Task.Run(() =>
-            BuildAvaloniaApp().StartWithClassicDesktopLifetime(args));
+        var uiThread = new Thread(() =>
+        {
+            appLifetime.ApplicationStopping.Register(() =>
+            {
+                if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+                    Dispatcher.UIThread.Post(desktop.Shutdown);
+            });
+
+            try
+            {
+                BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
+            }
+            catch (Exception ex)
+            {
+                ended.TrySetException(ex);
+                return;
+            }
+
+            ended.TrySetResult();
+        })
+        {
+            IsBackground = false,
+            Name = "AvaloniaUI"
+        };
+
+        try
+        {
+            uiThread.SetApartmentState(ApartmentState.STA);
+        }
+        catch (PlatformNotSupportedException)
+        {
+        }
+
+        uiThread.Start();
+        return ended.Task;
     }
 
     private static AppBuilder BuildAvaloniaApp()
