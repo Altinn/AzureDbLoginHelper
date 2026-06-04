@@ -1,5 +1,7 @@
 # Azure DB Login Helper
 
+![Azure DB Login Helper demonstration](Assets/demonstration-image.png)
+
 A cross-platform tray/menu-bar app for Azure PostgreSQL access tokens after PIM activation. Works on **Windows** and **macOS**.
 
 ## Features
