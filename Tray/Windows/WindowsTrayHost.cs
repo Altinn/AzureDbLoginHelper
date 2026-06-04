@@ -1,6 +1,5 @@
 #if USE_WINFORMS_TRAY
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Runtime.InteropServices;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -246,20 +245,8 @@ public sealed class WindowsTrayHost
 
         private static Icon CreateTrayIcon()
         {
-            using var bitmap = new Bitmap(32, 32);
-            using (var g = Graphics.FromImage(bitmap))
-            {
-                g.SmoothingMode = SmoothingMode.AntiAlias;
-                g.Clear(Color.Transparent);
-
-                using var azure = new SolidBrush(Color.FromArgb(0, 120, 212));
-                g.FillEllipse(azure, 1, 1, 30, 30);
-
-                using var white = new SolidBrush(Color.White);
-                g.FillRectangle(white, 9, 13, 14, 11);
-                g.FillRectangle(white, 11, 8, 10, 6);
-                g.FillEllipse(white, 13, 6, 6, 4);
-            }
+            using var png = TrayIconBitmap.CreatePngStream();
+            using var bitmap = new Bitmap(png);
 
             var handle = bitmap.GetHicon();
             try
