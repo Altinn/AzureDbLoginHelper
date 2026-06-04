@@ -8,48 +8,20 @@ namespace AzureDbLoginHelper;
 
 internal static class AvaloniaEntry
 {
-    public static Task RunAsync(IHost host, string[] args)
+    /// <summary>
+    /// Blocks the caller thread until Avalonia exits. On macOS this must be the process main thread.
+    /// </summary>
+    public static void Run(IHost host, string[] args)
     {
         App.ConfigureHost(host);
 
-        var appLifetime = host.Services.GetRequiredService<IHostApplicationLifetime>();
-        var ended = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
-
-        var uiThread = new Thread(() =>
+        host.Services.GetRequiredService<IHostApplicationLifetime>().ApplicationStopping.Register(() =>
         {
-            appLifetime.ApplicationStopping.Register(() =>
-            {
-                if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
-                    Dispatcher.UIThread.Post(() => desktop.Shutdown());
-            });
+            if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+                Dispatcher.UIThread.Post(() => desktop.Shutdown());
+        });
 
-            try
-            {
-                BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
-            }
-            catch (Exception ex)
-            {
-                ended.TrySetException(ex);
-                return;
-            }
-
-            ended.TrySetResult();
-        })
-        {
-            IsBackground = false,
-            Name = "AvaloniaUI"
-        };
-
-        try
-        {
-            uiThread.SetApartmentState(ApartmentState.STA);
-        }
-        catch (PlatformNotSupportedException)
-        {
-        }
-
-        uiThread.Start();
-        return ended.Task;
+        BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
     }
 
     private static AppBuilder BuildAvaloniaApp()

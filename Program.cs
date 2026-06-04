@@ -7,6 +7,26 @@ internal static class Program
 {
     private const string LocalSettingsPath = "appsettings.local.json";
 
+#if USE_AVALONIA_TRAY
+    // Avalonia macOS native backend must initialize on the process main thread (not thread pool / worker).
+    public static void Main(string[] args) => RunMacOs(args);
+
+    private static void RunMacOs(string[] args)
+    {
+        var host = CreateHost(args);
+        host.StartAsync().GetAwaiter().GetResult();
+        WriteStartupMessage();
+
+        try
+        {
+            AvaloniaEntry.Run(host, args);
+        }
+        finally
+        {
+            host.StopAsync().GetAwaiter().GetResult();
+        }
+    }
+#else
     public static async Task Main(string[] args)
     {
         var host = CreateHost(args);
@@ -15,18 +35,15 @@ internal static class Program
 
         try
         {
-#if USE_WINFORMS_TRAY
             var tray = host.Services.GetRequiredService<WindowsTrayHost>();
             await tray.RunAsync(host.Services.GetRequiredService<IHostApplicationLifetime>().ApplicationStopping);
-#elif USE_AVALONIA_TRAY
-            await AvaloniaEntry.RunAsync(host, args);
-#endif
         }
         finally
         {
             await host.StopAsync();
         }
     }
+#endif
 
     private static IHost CreateHost(string[] args)
     {
