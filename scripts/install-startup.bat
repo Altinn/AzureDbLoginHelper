@@ -3,7 +3,7 @@ cd /d "%~dp0\.."
 echo Installing Azure DB Login Helper as Startup Application...
 
 echo Building application...
-dotnet build --configuration Release -f net8.0-windows
+dotnet build --configuration Release -f net10.0-windows
 if %ERRORLEVEL% neq 0 (
     echo Build failed!
     pause
@@ -11,7 +11,7 @@ if %ERRORLEVEL% neq 0 (
 )
 
 set CURRENT_DIR=%CD%
-set APP_PATH=%CURRENT_DIR%\bin\Release\net8.0-windows\AzureDbLoginHelper.exe
+set APP_PATH=%CURRENT_DIR%\bin\Release\net10.0-windows\AzureDbLoginHelper.exe
 
 if not exist "%APP_PATH%" (
     echo Executable not found at: %APP_PATH%
@@ -27,7 +27,7 @@ echo Set oWS = WScript.CreateObject("WScript.Shell") > CreateShortcut.vbs
 echo sLinkFile = "%SHORTCUT_PATH%" >> CreateShortcut.vbs
 echo Set oLink = oWS.CreateShortcut(sLinkFile) >> CreateShortcut.vbs
 echo oLink.TargetPath = "%APP_PATH%" >> CreateShortcut.vbs
-echo oLink.WorkingDirectory = "%CURRENT_DIR%\bin\Release\net8.0-windows" >> CreateShortcut.vbs
+echo oLink.WorkingDirectory = "%CURRENT_DIR%\bin\Release\net10.0-windows" >> CreateShortcut.vbs
 echo oLink.Description = "Azure DB Login Helper" >> CreateShortcut.vbs
 echo oLink.Save >> CreateShortcut.vbs
 
