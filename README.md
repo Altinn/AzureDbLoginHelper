@@ -78,10 +78,10 @@ dotnet run -f net8.0-windows
 ### Install at login
 
 ```bat
-install-startup.bat
+scripts\install-startup.bat
 ```
 
-Removes with `uninstall-startup.bat`.
+Removes with `scripts\uninstall-startup.bat`.
 
 ### Troubleshooting (Windows)
 
@@ -128,15 +128,15 @@ dotnet build -c Release -f net8.0
 ./bin/Release/net8.0/AzureDbLoginHelper
 ```
 
-`appsettings.local.json` is copied into `bin/Release/net8.0/` on build. Keep that file next to the executable if you move the app elsewhere.
+`appsettings.local.json` is copied into `bin/Release/net8.0/` on build. Keep it next to the executable if you move the app elsewhere.
 
 ### Install at login (LaunchAgent)
 
 The install script builds Release, registers a user LaunchAgent, and starts the app at login:
 
 ```bash
-chmod +x install-startup-macos.sh
-./install-startup-macos.sh
+chmod +x scripts/install-startup-macos.sh
+./scripts/install-startup-macos.sh
 ```
 
 This creates `~/Library/LaunchAgents/com.azuredblogin.helper.plist` pointing at:
@@ -167,7 +167,7 @@ launchctl load ~/Library/LaunchAgents/com.azuredblogin.helper.plist
 ### Troubleshooting (macOS)
 
 - **Menu bar icon not visible** — macOS hides overflow icons when the menu bar is full; free space or use **Control Center** settings. Confirm the process is running: `pgrep -l AzureDbLoginHelper`.
-- **App exits immediately after install** — ensure `appsettings.local.json` exists in the project before running `install-startup-macos.sh` (it must be copied into `bin/Release/net8.0/`). Check logs: `log show --predicate 'process == "AzureDbLoginHelper"' --last 5m` or run the binary manually in Terminal to see errors.
+- **App exits immediately after install** — ensure `appsettings.local.json` exists before running `scripts/install-startup-macos.sh` (it must be copied into `bin/Release/net8.0/`). Check logs: `log show --predicate 'process == "AzureDbLoginHelper"' --last 5m` or run the binary manually in Terminal to see errors.
 - **Browser does not open for sign-in** — allow the app when macOS prompts for network or automation; run once via `dotnet run -f net8.0` to complete the interactive login.
 - **Token missing group claim** — activate PIM in the portal, select the correct **Role** in the menu (not **Plain token**), then **Regenerate token**.
 - **Groups overage** — too many Entra groups; token omits `groups` claim — contact an admin.

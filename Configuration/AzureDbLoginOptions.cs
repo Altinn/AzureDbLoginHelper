@@ -1,4 +1,4 @@
-﻿namespace AzureDbLoginHelper;
+namespace AzureDbLoginHelper;
 
 public class AzureDbLoginOptions
 {

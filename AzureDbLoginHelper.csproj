@@ -42,26 +42,22 @@
     <PackageReference Include="Avalonia.Themes.Fluent" Version="11.2.3" />
   </ItemGroup>
 
-  <!-- macOS build: no WinForms tray -->
+  <!-- macOS: WinForms tray only -->
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
-    <Compile Remove="WindowsTrayHost.cs" />
+    <Compile Remove="Tray\Windows\**" />
   </ItemGroup>
-  <!-- Windows build: no Avalonia UI -->
 
+  <!-- Windows: Avalonia tray only -->
   <ItemGroup Condition="'$(TargetFramework)' == 'net8.0-windows'">
-    <Compile Remove="TrayController.cs" />
-    <Compile Remove="TrayIconFactory.cs" />
-    <Compile Remove="App.axaml.cs" />
-    <Compile Remove="Program.Avalonia.cs" />
-    <None Remove="App.axaml" />
+    <Compile Remove="Tray\Avalonia\**" />
+    <None Remove="Tray\Avalonia\**" />
   </ItemGroup>
-
-
 
   <ItemGroup>
     <None Update="appsettings.local.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
+
 </Project>

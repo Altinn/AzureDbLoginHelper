@@ -5,6 +5,8 @@ using Microsoft.Extensions.Hosting;
 
 internal static class Program
 {
+    private const string LocalSettingsPath = "appsettings.local.json";
+
     public static async Task Main(string[] args)
     {
         var host = CreateHost(args);
@@ -63,7 +65,7 @@ internal static class Program
             }
         }
 
-        builder.Configuration.AddJsonFile("appsettings.local.json", optional: false, reloadOnChange: true);
+        builder.Configuration.AddJsonFile(LocalSettingsPath, optional: false, reloadOnChange: true);
     }
 
     private static void WriteStartupMessage()

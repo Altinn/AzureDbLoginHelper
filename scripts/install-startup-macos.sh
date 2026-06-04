@@ -1,15 +1,21 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$SCRIPT_DIR"
 
 echo "Building Azure DB Login Helper..."
-dotnet build --configuration Release
+dotnet build --configuration Release -f net8.0
 
 APP_PATH="$SCRIPT_DIR/bin/Release/net8.0/AzureDbLoginHelper"
 if [[ ! -f "$APP_PATH" ]]; then
   echo "Executable not found at: $APP_PATH"
+  exit 1
+fi
+
+if [[ ! -f "$SCRIPT_DIR/bin/Release/net8.0/appsettings.local.json" ]]; then
+  echo "Missing appsettings.local.json in build output."
+  echo "Copy appsettings.example.json to appsettings.local.json first."
   exit 1
 fi
 
@@ -29,6 +35,8 @@ cat > "$PLIST_PATH" <<EOF
   <array>
     <string>$APP_PATH</string>
   </array>
+  <key>WorkingDirectory</key>
+  <string>$SCRIPT_DIR/bin/Release/net8.0</string>
   <key>RunAtLoad</key>
   <true/>
   <key>KeepAlive</key>

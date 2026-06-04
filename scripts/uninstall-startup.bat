@@ -1,7 +1,6 @@
 @echo off
 echo Uninstalling Azure DB Login Helper Startup Application...
 
-REM Remove startup shortcut
 set STARTUP_FOLDER=%APPDATA%\Microsoft\Windows\Start Menu\Programs\Startup
 set SHORTCUT_PATH=%STARTUP_FOLDER%\Azure DB Login Helper.lnk
 
