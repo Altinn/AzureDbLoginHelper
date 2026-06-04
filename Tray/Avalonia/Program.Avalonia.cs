@@ -20,7 +20,7 @@ internal static class AvaloniaEntry
             appLifetime.ApplicationStopping.Register(() =>
             {
                 if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
-                    Dispatcher.UIThread.Post(desktop.Shutdown);
+                    Dispatcher.UIThread.Post(() => desktop.Shutdown());
             });
 
             try
