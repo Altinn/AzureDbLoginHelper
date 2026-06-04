@@ -60,3 +60,10 @@ nunit-*.xml
 !.vscode/launch.json
 !.vscode/extensions.json
 !.vscode/*.code-snippets
+
+## VS files
+.vs
+*.sln
+
+# Local configuration (copy from appsettings.example.json)
+appsettings.local.json
